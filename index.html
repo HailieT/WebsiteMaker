@@ -7,66 +7,271 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
     <div class="container">
         <h1>WebsiteMaker</h1>
         <p class="subtitle">Design your website and download the code</p>
         
         <form id="designForm">
+            <fieldset>
+                <legend class="visually-hidden">Website Design Settings</legend>
             <div class="form-group">
                 <label for="siteTitle">Website Title:</label>
-                <input type="text" id="siteTitle" value="My Awesome Website" required>
+                <input type="text" id="siteTitle" placeholder="My Awesome Website" required>
             </div>
 
             <div class="form-group">
                 <label for="heading">Main Heading:</label>
-                <input type="text" id="heading" value="Welcome to My Site" required>
+                <input type="text" id="heading" placeholder="Welcome to My Site" required>
             </div>
 
             <div class="form-group">
                 <label for="content">Content:</label>
-                <textarea id="content" rows="4" required>This is my website content. You can customize this text.</textarea>
+                <textarea id="content" rows="4" placeholder="This is my website content. You can customize this text." required></textarea>
             </div>
 
             <div class="form-group">
-                <label for="bgColor">Background Color:</label>
-                <input type="color" id="bgColor" value="#ffffff">
+                <label for="colorTheme">Color Theme:</label>
+                <select id="colorTheme">
+                    <option value="custom" selected>Custom</option>
+                    <option value="professional">Professional (Blue & Gray)</option>
+                    <option value="vibrant">Vibrant (Purple & Orange)</option>
+                    <option value="pastel">Pastel (Soft Pink & Blue)</option>
+                    <option value="dark">Dark Mode (Dark & Cyan)</option>
+                    <option value="nature">Nature (Green & Brown)</option>
+                    <option value="sunset">Sunset (Orange & Pink)</option>
+                </select>
+            </div>
+
+            <div id="customColors">
+                <div class="form-group">
+                    <label for="bgColor">Background Color:</label>
+                    <input type="color" id="bgColor" value="#ffffff" aria-label="Background color picker">
+                </div>
+
+                <div class="form-group">
+                    <label for="textColor">Text Color:</label>
+                    <input type="color" id="textColor" value="#333333" aria-label="Text color picker">
+                </div>
+
+                <div class="form-group">
+                    <label for="accentColor">Accent Color:</label>
+                    <input type="color" id="accentColor" value="#007bff" aria-label="Accent color picker">
+                </div>
+
+                <div class="form-group">
+                    <label for="secondaryAccent">Secondary Accent:</label>
+                    <input type="color" id="secondaryAccent" value="#6c757d" aria-label="Secondary accent color picker">
+                </div>
             </div>
 
             <div class="form-group">
-                <label for="textColor">Text Color:</label>
-                <input type="color" id="textColor" value="#333333">
+                <label for="headingFont">Heading Font:</label>
+                <select id="headingFont">
+                    <option value="Arial, sans-serif">Arial</option>
+                    <option value="'Georgia', serif">Georgia</option>
+                    <option value="'Courier New', monospace">Courier New</option>
+                    <option value="'Verdana', sans-serif">Verdana</option>
+                    <option value="'Times New Roman', serif">Times New Roman</option>
+                    <option value="'Trebuchet MS', sans-serif">Trebuchet MS</option>
+                </select>
             </div>
 
             <div class="form-group">
-                <label for="accentColor">Accent Color:</label>
-                <input type="color" id="accentColor" value="#007bff">
-            </div>
-
-            <div class="form-group">
-                <label for="fontFamily">Font:</label>
+                <label for="fontFamily">Body Font:</label>
                 <select id="fontFamily">
                     <option value="Arial, sans-serif">Arial</option>
                     <option value="'Georgia', serif">Georgia</option>
                     <option value="'Courier New', monospace">Courier New</option>
                     <option value="'Verdana', sans-serif">Verdana</option>
+                    <option value="'Times New Roman', serif">Times New Roman</option>
+                    <option value="'Trebuchet MS', sans-serif">Trebuchet MS</option>
                 </select>
             </div>
 
-            <div class="sections-container">
+            <div class="form-group">
+                <label for="fontSize">Font Size:</label>
+                <select id="fontSize">
+                    <option value="small">Small</option>
+                    <option value="medium" selected>Medium</option>
+                    <option value="large">Large</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="lineHeight">Line Height:</label>
+                <select id="lineHeight">
+                    <option value="1.4">Compact</option>
+                    <option value="1.6" selected>Comfortable</option>
+                    <option value="1.8">Spacious</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="pageWidth">Page Width:</label>
+                <select id="pageWidth">
+                    <option value="narrow">Narrow (800px)</option>
+                    <option value="standard" selected>Standard (1200px)</option>
+                    <option value="wide">Wide (1400px)</option>
+                    <option value="full">Full Width</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="spacing">Spacing:</label>
+                <select id="spacing">
+                    <option value="compact">Compact</option>
+                    <option value="comfortable" selected>Comfortable</option>
+                    <option value="spacious">Spacious</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="borderRadius">Border Radius:</label>
+                <select id="borderRadius">
+                    <option value="0px">Sharp</option>
+                    <option value="8px" selected>Slightly Rounded</option>
+                    <option value="16px">Very Rounded</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="shadowIntensity">Shadow Intensity:</label>
+                <select id="shadowIntensity">
+                    <option value="none">None</option>
+                    <option value="subtle">Subtle</option>
+                    <option value="medium" selected>Medium</option>
+                    <option value="strong">Strong</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="buttonStyle">Button Style:</label>
+                <select id="buttonStyle">
+                    <option value="filled" selected>Filled</option>
+                    <option value="outline">Outline</option>
+                    <option value="ghost">Ghost</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="buttonSize">Button Size:</label>
+                <select id="buttonSize">
+                    <option value="small">Small</option>
+                    <option value="medium" selected>Medium</option>
+                    <option value="large">Large</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="animations">Animations:</label>
+                <select id="animations">
+                    <option value="enabled" selected>Enabled</option>
+                    <option value="disabled">Disabled</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="contentAlign">Main Content Alignment:</label>
+                <select id="contentAlign">
+                    <option value="left" selected>Left</option>
+                    <option value="center">Center</option>
+                    <option value="justify">Justified</option>
+                </select>
+            </div>
+            </fieldset>
+
+            <fieldset>
+                <legend class="section-legend">Pages</legend>
+                <p style="color: #6b4423; margin-bottom: 15px;">Create multiple pages for your website. Each page can have its own sections.</p>
+                
                 <div class="form-group">
-                    <label>Additional Sections:</label>
-                    <button type="button" id="addSectionBtn" class="btn btn-add">+ Add Section</button>
+                    <label id="pagesLabel">Website Pages:</label>
+                    <button type="button" id="addPageBtn" class="btn btn-add" aria-label="Add new page">+ Add Page</button>
                 </div>
-                <div id="sectionsWrapper"></div>
+                <div id="pagesWrapper" role="region" aria-labelledby="pagesLabel"></div>
+            </fieldset>
+
+            <fieldset>
+                <legend class="section-legend">Header & Footer</legend>
+
+                <div class="form-group">
+                    <label for="includeHeader">Include Header:</label>
+                    <select id="includeHeader">
+                        <option value="yes">Yes</option>
+                        <option value="no" selected>No</option>
+                    </select>
+                </div>
+
+                <div id="headerOptions" style="display: none;">
+                    <div class="form-group">
+                        <label for="logoType">Logo Type:</label>
+                        <select id="logoType">
+                            <option value="text" selected>Text</option>
+                            <option value="image">Image URL</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="logoContent">Logo Content:</label>
+                        <input type="text" id="logoContent" placeholder="My Brand" aria-required="false">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="navItems">Navigation Items (comma-separated):</label>
+                        <input type="text" id="navItems" placeholder="Home, About, Services, Contact" aria-required="false">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="headerStyle">Header Style:</label>
+                        <select id="headerStyle">
+                            <option value="sticky">Sticky (stays on top)</option>
+                            <option value="static" selected>Static</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="includeFooter">Include Footer:</label>
+                    <select id="includeFooter">
+                        <option value="yes">Yes</option>
+                        <option value="no" selected>No</option>
+                    </select>
+                </div>
+
+                <div id="footerOptions" style="display: none;">
+                    <div class="form-group">
+                        <label for="copyrightText">Copyright Text:</label>
+                        <input type="text" id="copyrightText" placeholder="© 2024 My Website. All rights reserved." aria-required="false">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="socialLinks">Social Links (format: Platform|URL, comma-separated):</label>
+                        <textarea id="socialLinks" rows="3" placeholder="Facebook|https://facebook.com, Twitter|https://twitter.com, Instagram|https://instagram.com" aria-required="false"></textarea>
+                    </div>
+                </div>
+            </fieldset>
+
+            <div class="sections-container" id="main-content">
+                <div class="form-group">
+                    <label id="sectionsLabel">Additional Sections:</label>
+                    <button type="button" id="addSectionBtn" class="btn btn-add" aria-label="Add new section">+ Add Section</button>
+                </div>
+                <div id="sectionsWrapper" role="region" aria-labelledby="sectionsLabel"></div>
             </div>
 
             <button type="button" id="previewBtn" class="btn btn-secondary">Preview</button>
             <button type="button" id="downloadBtn" class="btn btn-primary">Download Website</button>
         </form>
 
-        <div id="preview" class="preview-container" style="display: none;">
-            <h3>Preview</h3>
-            <iframe id="previewFrame"></iframe>
+        <div id="preview" class="preview-container" style="display: none;" role="region" aria-live="polite">
+            <h2>Preview</h2>
+            <div id="previewPageSwitcher" style="display: none; margin-bottom: 15px; padding: 15px; background: #fff0f5; border-radius: 8px; border: 2px solid #d91b5c;">
+                <label style="font-weight: 600; color: #d91b5c; margin-right: 10px;">View Page:</label>
+                <select id="previewPageSelect" style="padding: 8px 12px; border: 2px solid #d91b5c; border-radius: 8px; font-size: 14px; background: white; cursor: pointer;">
+                </select>
+            </div>
+            <iframe id="previewFrame" title="Website preview"></iframe>
         </div>
     </div>
 

@@ -4,6 +4,36 @@
     box-sizing: border-box;
 }
 
+.skip-link {
+    position: absolute;
+    top: -40px;
+    left: 0;
+    background: #d91b5c;
+    color: white;
+    padding: 8px 16px;
+    text-decoration: none;
+    font-weight: 600;
+    z-index: 100;
+}
+
+.skip-link:focus {
+    top: 0;
+    outline: 3px solid #a01548;
+    outline-offset: 2px;
+}
+
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+}
+
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
     background: linear-gradient(135deg, #ffc0cb 0%, #ffb6c1 50%, #f5deb3 100%);
@@ -34,6 +64,21 @@ h1 {
     font-size: 1.1em;
 }
 
+fieldset {
+    border: none;
+    padding: 0;
+    margin: 0;
+}
+
+.section-legend {
+    font-size: 1.3em;
+    color: #d91b5c;
+    font-weight: 700;
+    margin: 30px 0 20px 0;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #ffc0cb;
+}
+
 .form-group {
     margin-bottom: 20px;
 }
@@ -60,7 +105,16 @@ textarea {
     font-size: 16px;
     transition: border-color 0.3s, box-shadow 0.3s;
     background: white;
-    color: #333;
+    color: #000000;
+}
+
+input[type="text"]::placeholder,
+input[type="email"]::placeholder,
+input[type="tel"]::placeholder,
+input[type="url"]::placeholder,
+textarea::placeholder {
+    color: rgba(100, 100, 100, 0.7);
+    opacity: 1;
 }
 
 input[type="text"]:focus,
@@ -72,6 +126,12 @@ textarea:focus {
     outline: none;
     border-color: #a01548;
     box-shadow: 0 0 0 4px rgba(217, 27, 92, 0.2);
+    color: #000000;
+}
+
+input[type="color"]:focus {
+    outline: 3px solid #a01548;
+    outline-offset: 2px;
 }
 
 input[type="color"] {
@@ -96,6 +156,11 @@ textarea {
 
 .btn:hover {
     transform: translateY(-2px);
+}
+
+.btn:focus {
+    outline: 3px solid #a01548;
+    outline-offset: 2px;
 }
 
 .btn-primary {
@@ -164,6 +229,11 @@ textarea {
     transform: translateY(-2px);
 }
 
+.btn-add:focus {
+    outline: 3px solid #6b4423;
+    outline-offset: 2px;
+}
+
 .section-item {
     background: white;
     padding: 20px;
@@ -202,6 +272,11 @@ textarea {
     background: #c82333;
 }
 
+.btn-remove:focus {
+    outline: 3px solid #c82333;
+    outline-offset: 2px;
+}
+
 .section-options {
     margin-top: 15px;
 }
@@ -236,6 +311,11 @@ textarea {
 
 .btn-add-small:hover {
     background: #6b4423;
+}
+
+.btn-add-small:focus {
+    outline: 3px solid #6b4423;
+    outline-offset: 2px;
 }
 
 .showcase-items-container {
@@ -280,6 +360,11 @@ textarea {
     background: #c82333;
 }
 
+.btn-remove-small:focus {
+    outline: 3px solid #c82333;
+    outline-offset: 2px;
+}
+
 .dynamic-inputs {
     margin-top: 15px;
 }
@@ -313,4 +398,56 @@ input[type="number"]:focus {
     outline: none;
     border-color: #a01548;
     box-shadow: 0 0 0 4px rgba(217, 27, 92, 0.2);
+}
+
+.page-item {
+    background: white;
+    padding: 20px;
+    margin: 20px 0;
+    border-radius: 12px;
+    border: 2px solid #8b6f47;
+}
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #f5deb3;
+}
+
+.page-header h3 {
+    color: #8b6f47;
+    font-size: 1.3em;
+    margin: 0;
+}
+
+.page-header div {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-edit {
+    background: #8b6f47;
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 15px;
+    font-size: 14px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.btn-edit:hover {
+    background: #6b4423;
+}
+
+.btn-edit:focus {
+    outline: 3px solid #6b4423;
+    outline-offset: 2px;
+}
+
+#pagesWrapper {
+    margin-top: 20px;
 }
