@@ -207,40 +207,172 @@ function getCurrentSections() {
         
         const sectionData = { type };
         
-        // Get all inputs within this section
-        const inputs = sectionEl.querySelectorAll('input:not([id*="-item-"]):not([id*="-imageUrl-"]):not([id*="-caption-"]):not([id*="-feature-"]):not([id*="-plan"]):not([id*="-faq"]):not([id*="-step"]):not([id*="-member"]):not([id*="-stat"]), textarea:not([id*="-item-"]):not([id*="-plan"]):not([id*="-faq"]):not([id*="-step"]):not([id*="-member"]), select:not([id*="-item-"])');
-        inputs.forEach(input => {
-            if (input.id && input.id.includes('-') && !input.id.includes('-items') && !input.id.includes('-inputs')) {
-                const key = input.id.split('-').slice(2).join('-');
-                if (key && key !== 'type') {
-                    sectionData[key] = input.value;
+        // Collect data based on section type
+        switch(type) {
+            case 'text':
+                sectionData.heading = document.getElementById(`${sectionId}-heading`)?.value || '';
+                sectionData.content = document.getElementById(`${sectionId}-content`)?.value || '';
+                sectionData.align = document.getElementById(`${sectionId}-align`)?.value || 'left';
+                break;
+                
+            case 'image': {
+                sectionData.imageSize = document.getElementById(`${sectionId}-imageSize`)?.value || 'medium';
+                const imageCount = parseInt(document.getElementById(`${sectionId}-imageCount`)?.value) || 1;
+                sectionData.imageCount = imageCount;
+                const images = [];
+                for (let i = 1; i <= imageCount; i++) {
+                    images.push({
+                        url: document.getElementById(`${sectionId}-imageUrl-${i}`)?.value || '',
+                        caption: document.getElementById(`${sectionId}-caption-${i}`)?.value || ''
+                    });
                 }
+                sectionData.images = images;
+                break;
             }
-        });
-        
-        // Handle specific section types with dynamic content
-        if (type === 'image') {
-            const imageCount = parseInt(document.getElementById(`${sectionId}-imageCount`)?.value) || 1;
-            const images = [];
-            for (let i = 1; i <= imageCount; i++) {
-                const url = document.getElementById(`${sectionId}-imageUrl-${i}`)?.value || '';
-                const caption = document.getElementById(`${sectionId}-caption-${i}`)?.value || '';
-                images.push({ url, caption });
+                
+            case 'features': {
+                sectionData.featuresTitle = document.getElementById(`${sectionId}-featuresTitle`)?.value || '';
+                sectionData.layout = document.getElementById(`${sectionId}-layout`)?.value || 'vertical';
+                const featureCount = parseInt(document.getElementById(`${sectionId}-featureCount`)?.value) || 3;
+                sectionData.featureCount = featureCount;
+                const features = [];
+                for (let i = 1; i <= featureCount; i++) {
+                    features.push(document.getElementById(`${sectionId}-feature-${i}`)?.value || '');
+                }
+                sectionData.features = features;
+                break;
             }
-            sectionData.images = images;
+                
+            case 'contact':
+                sectionData.contactTitle = document.getElementById(`${sectionId}-contactTitle`)?.value || '';
+                sectionData.contactType = document.getElementById(`${sectionId}-contactType`)?.value || 'email';
+                sectionData.contactValue = document.getElementById(`${sectionId}-contactValue`)?.value || '';
+                sectionData.buttonText = document.getElementById(`${sectionId}-buttonText`)?.value || '';
+                sectionData.buttonColor = document.getElementById(`${sectionId}-buttonColor`)?.value || '#d91b5c';
+                break;
+                
+            case 'showcase': {
+                sectionData.showcaseTitle = document.getElementById(`${sectionId}-showcaseTitle`)?.value || '';
+                sectionData.showcaseType = document.getElementById(`${sectionId}-showcaseType`)?.value || 'projects';
+                sectionData.showcaseLayout = document.getElementById(`${sectionId}-showcaseLayout`)?.value || 'grid';
+                const itemsContainer = document.getElementById(`${sectionId}-items`);
+                const items = [];
+                if (itemsContainer) {
+                    const itemElements = itemsContainer.querySelectorAll('.showcase-item');
+                    itemElements.forEach(itemEl => {
+                        const itemId = itemEl.id;
+                        const mediaType = document.getElementById(`${itemId}-mediaType`)?.value || 'image';
+                        const item = {
+                            title: document.getElementById(`${itemId}-title`)?.value || '',
+                            description: document.getElementById(`${itemId}-description`)?.value || '',
+                            link: document.getElementById(`${itemId}-link`)?.value || '',
+                            mediaType: mediaType
+                        };
+                        if (mediaType === 'image' || mediaType === 'both') {
+                            item.image = document.getElementById(`${itemId}-image`)?.value || '';
+                        }
+                        if (mediaType === 'video' || mediaType === 'both') {
+                            item.video = document.getElementById(`${itemId}-video`)?.value || '';
+                        }
+                        if (mediaType === 'both') {
+                            item.mediaLayout = document.getElementById(`${itemId}-mediaLayout`)?.value || 'carousel';
+                        }
+                        items.push(item);
+                    });
+                }
+                sectionData.items = items;
+                break;
+            }
+                
+            case 'hero':
+                sectionData.heroTitle = document.getElementById(`${sectionId}-heroTitle`)?.value || '';
+                sectionData.heroSubtitle = document.getElementById(`${sectionId}-heroSubtitle`)?.value || '';
+                sectionData.heroDescription = document.getElementById(`${sectionId}-heroDescription`)?.value || '';
+                sectionData.heroCTA = document.getElementById(`${sectionId}-heroCTA`)?.value || '';
+                sectionData.heroCTALink = document.getElementById(`${sectionId}-heroCTALink`)?.value || '';
+                sectionData.heroImage = document.getElementById(`${sectionId}-heroImage`)?.value || '';
+                break;
+                
+            case 'pricing': {
+                sectionData.pricingTitle = document.getElementById(`${sectionId}-pricingTitle`)?.value || '';
+                const planCount = parseInt(document.getElementById(`${sectionId}-planCount`)?.value) || 3;
+                sectionData.planCount = planCount;
+                const plans = [];
+                for (let i = 1; i <= planCount; i++) {
+                    plans.push({
+                        name: document.getElementById(`${sectionId}-plan${i}-name`)?.value || '',
+                        price: document.getElementById(`${sectionId}-plan${i}-price`)?.value || '',
+                        features: document.getElementById(`${sectionId}-plan${i}-features`)?.value || '',
+                        highlight: document.getElementById(`${sectionId}-plan${i}-highlight`)?.value || 'no'
+                    });
+                }
+                sectionData.plans = plans;
+                break;
+            }
+                
+            case 'faq': {
+                sectionData.faqTitle = document.getElementById(`${sectionId}-faqTitle`)?.value || '';
+                const faqCount = parseInt(document.getElementById(`${sectionId}-faqCount`)?.value) || 4;
+                sectionData.faqCount = faqCount;
+                const faqs = [];
+                for (let i = 1; i <= faqCount; i++) {
+                    faqs.push({
+                        question: document.getElementById(`${sectionId}-faq${i}-question`)?.value || '',
+                        answer: document.getElementById(`${sectionId}-faq${i}-answer`)?.value || ''
+                    });
+                }
+                sectionData.faqs = faqs;
+                break;
+            }
+                
+            case 'timeline': {
+                sectionData.timelineTitle = document.getElementById(`${sectionId}-timelineTitle`)?.value || '';
+                const stepCount = parseInt(document.getElementById(`${sectionId}-stepCount`)?.value) || 4;
+                sectionData.stepCount = stepCount;
+                const steps = [];
+                for (let i = 1; i <= stepCount; i++) {
+                    steps.push({
+                        title: document.getElementById(`${sectionId}-step${i}-title`)?.value || '',
+                        description: document.getElementById(`${sectionId}-step${i}-description`)?.value || ''
+                    });
+                }
+                sectionData.steps = steps;
+                break;
+            }
+                
+            case 'team': {
+                sectionData.teamTitle = document.getElementById(`${sectionId}-teamTitle`)?.value || '';
+                sectionData.teamLayout = document.getElementById(`${sectionId}-teamLayout`)?.value || 'grid3';
+                const memberCount = parseInt(document.getElementById(`${sectionId}-memberCount`)?.value) || 4;
+                sectionData.memberCount = memberCount;
+                const members = [];
+                for (let i = 1; i <= memberCount; i++) {
+                    members.push({
+                        name: document.getElementById(`${sectionId}-member${i}-name`)?.value || '',
+                        role: document.getElementById(`${sectionId}-member${i}-role`)?.value || '',
+                        bio: document.getElementById(`${sectionId}-member${i}-bio`)?.value || '',
+                        image: document.getElementById(`${sectionId}-member${i}-image`)?.value || ''
+                    });
+                }
+                sectionData.members = members;
+                break;
+            }
+                
+            case 'stats': {
+                sectionData.statsTitle = document.getElementById(`${sectionId}-statsTitle`)?.value || '';
+                const statCount = parseInt(document.getElementById(`${sectionId}-statCount`)?.value) || 4;
+                sectionData.statCount = statCount;
+                const stats = [];
+                for (let i = 1; i <= statCount; i++) {
+                    stats.push({
+                        number: document.getElementById(`${sectionId}-stat${i}-number`)?.value || '',
+                        label: document.getElementById(`${sectionId}-stat${i}-label`)?.value || ''
+                    });
+                }
+                sectionData.stats = stats;
+                break;
+            }
         }
-        
-        if (type === 'features') {
-            const featureCount = parseInt(document.getElementById(`${sectionId}-featureCount`)?.value) || 3;
-            const features = [];
-            for (let i = 1; i <= featureCount; i++) {
-                const feature = document.getElementById(`${sectionId}-feature-${i}`)?.value || '';
-                features.push(feature);
-            }
-            sectionData.features = features;
-        }
-        
-        // Add other dynamic content types as needed...
         
         sections.push(sectionData);
     });
@@ -250,9 +382,162 @@ function getCurrentSections() {
 
 // Restore section data to UI
 function restoreSectionData(sectionId, sectionData) {
-    // This will be populated with values from sectionData
-    // For now, just trigger the initial setup
-    // Values will be empty/default
+    const type = sectionData.type;
+    
+    switch(type) {
+        case 'text':
+            setVal(`${sectionId}-heading`, sectionData.heading);
+            setVal(`${sectionId}-content`, sectionData.content);
+            setVal(`${sectionId}-align`, sectionData.align);
+            break;
+            
+        case 'image':
+            setVal(`${sectionId}-imageSize`, sectionData.imageSize);
+            setVal(`${sectionId}-imageCount`, sectionData.imageCount || 1);
+            updateImageInputs(sectionId);
+            if (sectionData.images) {
+                sectionData.images.forEach((img, i) => {
+                    setVal(`${sectionId}-imageUrl-${i + 1}`, img.url);
+                    setVal(`${sectionId}-caption-${i + 1}`, img.caption);
+                });
+            }
+            break;
+            
+        case 'features':
+            setVal(`${sectionId}-featuresTitle`, sectionData.featuresTitle);
+            setVal(`${sectionId}-layout`, sectionData.layout);
+            setVal(`${sectionId}-featureCount`, sectionData.featureCount || 3);
+            updateFeatureInputs(sectionId);
+            if (sectionData.features) {
+                sectionData.features.forEach((f, i) => {
+                    setVal(`${sectionId}-feature-${i + 1}`, f);
+                });
+            }
+            break;
+            
+        case 'contact':
+            setVal(`${sectionId}-contactTitle`, sectionData.contactTitle);
+            setVal(`${sectionId}-contactType`, sectionData.contactType);
+            updateContactInput(sectionId);
+            setVal(`${sectionId}-contactValue`, sectionData.contactValue);
+            setVal(`${sectionId}-buttonText`, sectionData.buttonText);
+            setVal(`${sectionId}-buttonColor`, sectionData.buttonColor);
+            break;
+            
+        case 'showcase':
+            setVal(`${sectionId}-showcaseTitle`, sectionData.showcaseTitle);
+            setVal(`${sectionId}-showcaseType`, sectionData.showcaseType);
+            setVal(`${sectionId}-showcaseLayout`, sectionData.showcaseLayout);
+            // Remove the default item that was auto-added
+            const itemsContainer = document.getElementById(`${sectionId}-items`);
+            if (itemsContainer) itemsContainer.innerHTML = '';
+            if (sectionData.items) {
+                sectionData.items.forEach(item => {
+                    addShowcaseItem(sectionId);
+                    const lastItem = itemsContainer.lastElementChild;
+                    if (lastItem) {
+                        const itemId = lastItem.id;
+                        setVal(`${itemId}-title`, item.title);
+                        setVal(`${itemId}-description`, item.description);
+                        setVal(`${itemId}-link`, item.link);
+                        setVal(`${itemId}-mediaType`, item.mediaType);
+                        updateShowcaseMedia(itemId);
+                        if (item.mediaType === 'image' || item.mediaType === 'both') {
+                            setVal(`${itemId}-image`, item.image);
+                        }
+                        if (item.mediaType === 'video' || item.mediaType === 'both') {
+                            setVal(`${itemId}-video`, item.video);
+                        }
+                        if (item.mediaType === 'both') {
+                            setVal(`${itemId}-mediaLayout`, item.mediaLayout);
+                        }
+                    }
+                });
+            }
+            break;
+            
+        case 'hero':
+            setVal(`${sectionId}-heroTitle`, sectionData.heroTitle);
+            setVal(`${sectionId}-heroSubtitle`, sectionData.heroSubtitle);
+            setVal(`${sectionId}-heroDescription`, sectionData.heroDescription);
+            setVal(`${sectionId}-heroCTA`, sectionData.heroCTA);
+            setVal(`${sectionId}-heroCTALink`, sectionData.heroCTALink);
+            setVal(`${sectionId}-heroImage`, sectionData.heroImage);
+            break;
+            
+        case 'pricing':
+            setVal(`${sectionId}-pricingTitle`, sectionData.pricingTitle);
+            setVal(`${sectionId}-planCount`, sectionData.planCount || 3);
+            updatePricingInputs(sectionId);
+            if (sectionData.plans) {
+                sectionData.plans.forEach((plan, i) => {
+                    setVal(`${sectionId}-plan${i + 1}-name`, plan.name);
+                    setVal(`${sectionId}-plan${i + 1}-price`, plan.price);
+                    setVal(`${sectionId}-plan${i + 1}-features`, plan.features);
+                    setVal(`${sectionId}-plan${i + 1}-highlight`, plan.highlight);
+                });
+            }
+            break;
+            
+        case 'faq':
+            setVal(`${sectionId}-faqTitle`, sectionData.faqTitle);
+            setVal(`${sectionId}-faqCount`, sectionData.faqCount || 4);
+            updateFAQInputs(sectionId);
+            if (sectionData.faqs) {
+                sectionData.faqs.forEach((faq, i) => {
+                    setVal(`${sectionId}-faq${i + 1}-question`, faq.question);
+                    setVal(`${sectionId}-faq${i + 1}-answer`, faq.answer);
+                });
+            }
+            break;
+            
+        case 'timeline':
+            setVal(`${sectionId}-timelineTitle`, sectionData.timelineTitle);
+            setVal(`${sectionId}-stepCount`, sectionData.stepCount || 4);
+            updateTimelineInputs(sectionId);
+            if (sectionData.steps) {
+                sectionData.steps.forEach((step, i) => {
+                    setVal(`${sectionId}-step${i + 1}-title`, step.title);
+                    setVal(`${sectionId}-step${i + 1}-description`, step.description);
+                });
+            }
+            break;
+            
+        case 'team':
+            setVal(`${sectionId}-teamTitle`, sectionData.teamTitle);
+            setVal(`${sectionId}-teamLayout`, sectionData.teamLayout);
+            setVal(`${sectionId}-memberCount`, sectionData.memberCount || 4);
+            updateTeamInputs(sectionId);
+            if (sectionData.members) {
+                sectionData.members.forEach((member, i) => {
+                    setVal(`${sectionId}-member${i + 1}-name`, member.name);
+                    setVal(`${sectionId}-member${i + 1}-role`, member.role);
+                    setVal(`${sectionId}-member${i + 1}-bio`, member.bio);
+                    setVal(`${sectionId}-member${i + 1}-image`, member.image);
+                });
+            }
+            break;
+            
+        case 'stats':
+            setVal(`${sectionId}-statsTitle`, sectionData.statsTitle);
+            setVal(`${sectionId}-statCount`, sectionData.statCount || 4);
+            updateStatsInputs(sectionId);
+            if (sectionData.stats) {
+                sectionData.stats.forEach((stat, i) => {
+                    setVal(`${sectionId}-stat${i + 1}-number`, stat.number);
+                    setVal(`${sectionId}-stat${i + 1}-label`, stat.label);
+                });
+            }
+            break;
+    }
+}
+
+// Helper to set a form element's value safely
+function setVal(id, value) {
+    const el = document.getElementById(id);
+    if (el && value !== undefined && value !== null) {
+        el.value = value;
+    }
 }
 
 // Color theme presets
@@ -955,16 +1240,13 @@ function getUserSelections() {
     if (currentPage) {
         pages[currentPage].sections = getCurrentSections();
         
-        // Save heading and content for current page
         if (currentPage === 'main') {
             pages[currentPage].heading = document.getElementById('heading')?.value || '';
             pages[currentPage].content = document.getElementById('content')?.value || '';
         } else {
-            // For non-main pages, save from the heading/content fields
             pages[currentPage].heading = document.getElementById('heading')?.value || '';
             pages[currentPage].content = document.getElementById('content')?.value || '';
             
-            // Also update the page's own fields
             const pageHeadingInput = document.getElementById(`${currentPage}-heading`);
             const pageContentInput = document.getElementById(`${currentPage}-content`);
             if (pageHeadingInput) pageHeadingInput.value = pages[currentPage].heading;
@@ -989,8 +1271,8 @@ function getUserSelections() {
     
     return {
         siteTitle: document.getElementById('siteTitle').value || 'My Awesome Website',
-        heading: document.getElementById('heading').value || 'Welcome to My Site',
-        content: document.getElementById('content').value || 'This is my website content.',
+        heading: pages['main']?.heading || document.getElementById('heading').value || 'Welcome to My Site',
+        content: pages['main']?.content || document.getElementById('content').value || '',
         bgColor: document.getElementById('bgColor').value,
         textColor: document.getElementById('textColor').value,
         accentColor: document.getElementById('accentColor').value,
@@ -1603,13 +1885,11 @@ function loadPreviewPage(pageId) {
     const modifiedHtml = html.replace(/<a href="([^"]+)"/g, (match, href) => {
         // Check if it's an internal page link
         if (href.endsWith('.html')) {
-            // Find the page ID for this filename
-            const selections = getUserSelections();
             let targetPageId = 'main';
             
             if (href !== 'index.html') {
-                Object.keys(selections.pages).forEach(pid => {
-                    if (selections.pages[pid].filename === href) {
+                Object.keys(pages).forEach(pid => {
+                    if (pages[pid].filename === href) {
                         targetPageId = pid;
                     }
                 });
