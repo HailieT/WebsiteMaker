@@ -9,6 +9,7 @@ const sectionsWrapper = document.getElementById('sectionsWrapper');
 
 let sectionCount = 0;
 let pageCount = 0;
+let showcaseItemCounter = 0;
 let currentPage = 'main'; // Track which page we're editing
 
 // Page management
@@ -99,11 +100,9 @@ function editPage(pageId) {
     if (currentPage) {
         pages[currentPage].sections = getCurrentSections();
         
-        // Save main page heading and content if on main page
-        if (currentPage === 'main') {
-            pages[currentPage].heading = document.getElementById('heading')?.value || '';
-            pages[currentPage].content = document.getElementById('content')?.value || '';
-        }
+        // Save heading and content from the shared fields
+        pages[currentPage].heading = document.getElementById('heading')?.value || '';
+        pages[currentPage].content = document.getElementById('content')?.value || '';
     }
     
     // Switch to new page
@@ -114,8 +113,9 @@ function editPage(pageId) {
         document.getElementById('heading').value = pages[pageId].heading || '';
         document.getElementById('content').value = pages[pageId].content || '';
     } else {
-        const pageHeading = document.getElementById(`${pageId}-heading`)?.value || '';
-        const pageContent = document.getElementById(`${pageId}-content`)?.value || '';
+        // Load from pages object (source of truth), fall back to DOM inputs
+        const pageHeading = pages[pageId]?.heading || document.getElementById(`${pageId}-heading`)?.value || '';
+        const pageContent = pages[pageId]?.content || document.getElementById(`${pageId}-content`)?.value || '';
         document.getElementById('heading').value = pageHeading;
         document.getElementById('content').value = pageContent;
     }
@@ -634,8 +634,9 @@ function removeSection(sectionId) {
 // Add showcase item
 function addShowcaseItem(sectionId) {
     const itemsContainer = document.getElementById(`${sectionId}-items`);
+    showcaseItemCounter++;
     const itemCount = itemsContainer.children.length + 1;
-    const itemId = `${sectionId}-item-${itemCount}`;
+    const itemId = `${sectionId}-item-${showcaseItemCounter}`;
     
     const itemDiv = document.createElement('div');
     itemDiv.className = 'showcase-item';
@@ -878,7 +879,7 @@ function updateSectionOptions(sectionId, type) {
                 </div>
                 <div class="form-group">
                     <label for="${sectionId}-heroCTALink">CTA Link:</label>
-                    <input type="url" id="${sectionId}-heroCTALink" value="#contact" aria-required="false">
+                    <input type="text" id="${sectionId}-heroCTALink" value="#contact" aria-required="false">
                 </div>
                 <div class="form-group">
                     <label for="${sectionId}-heroImage">Background Image URL (optional):</label>
@@ -1377,11 +1378,15 @@ function generateHTML(selections, pageId = 'main', allPages = null) {
     if (selections.includeFooter === 'yes') {
         let socialHTML = '';
         if (selections.socialLinks) {
-            const socialArray = selections.socialLinks.split(',').map(item => item.trim());
-            socialHTML = '<div style="margin-top: 15px;">' + socialArray.map(link => {
-                const [platform, url] = link.split('|').map(s => s.trim());
-                return `<a href="${url}" target="_blank" rel="noopener noreferrer" style="color: ${selections.accentColor}; text-decoration: none; margin: 0 10px; transition: ${transition};">${platform}</a>`;
-            }).join('') + '</div>';
+            const socialArray = selections.socialLinks.split(',').map(item => item.trim()).filter(item => item.includes('|'));
+            if (socialArray.length > 0) {
+                socialHTML = '<div style="margin-top: 15px;">' + socialArray.map(link => {
+                    const parts = link.split('|').map(s => s.trim());
+                    const platform = parts[0] || '';
+                    const url = parts[1] || '#';
+                    return `<a href="${url}" target="_blank" rel="noopener noreferrer" style="color: ${selections.accentColor}; text-decoration: none; margin: 0 10px; transition: ${transition};">${platform}</a>`;
+                }).join('') + '</div>';
+            }
         }
         
         footerHTML = `
@@ -1617,12 +1622,12 @@ function generateHTML(selections, pageId = 'main', allPages = null) {
                 break;
                 
             case 'hero':
-                const heroStyle = section.heroImage 
+                const heroBgStyle = section.heroImage 
                     ? `background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('${section.heroImage}'); background-size: cover; background-position: center;`
-                    : `background: linear-gradient(135deg, ${selections.accentColor}, ${selections.secondaryAccent});`;
+                    : `background: linear-gradient(135deg, ${selections.accentColor}, ${selections.secondaryAccent || selections.accentColor});`;
                 
                 sectionsHTML += `
-        <section class="hero-section" style="${heroStyle} color: white; padding: ${parseInt(sectionSpacing) * 2}px 20px; text-align: center; border-radius: ${selections.borderRadius}; margin: ${sectionSpacing} 0;">
+        <section class="hero-section" style="${heroBgStyle} color: white; padding: ${parseInt(sectionSpacing) * 2}px 20px; text-align: center; border-radius: ${selections.borderRadius}; margin: ${sectionSpacing} 0;">
             <h2 style="font-size: 3em; margin-bottom: 20px;">${section.heroTitle || 'Welcome'}</h2>
             <p style="font-size: 1.5em; margin-bottom: 15px; font-weight: 600;">${section.heroSubtitle || ''}</p>
             <p style="font-size: 1.2em; margin-bottom: 30px; max-width: 600px; margin-left: auto; margin-right: auto;">${section.heroDescription || ''}</p>
@@ -1634,8 +1639,8 @@ function generateHTML(selections, pageId = 'main', allPages = null) {
                 let pricingHTML = '';
                 if (section.plans && section.plans.length > 0) {
                     section.plans.forEach(plan => {
-                        const featuresArray = plan.features.split(',').map(f => f.trim());
-                        const featuresHTML = featuresArray.map(f => `<li style="padding: 8px 0;">${f}</li>`).join('');
+                        const featuresArray = (plan.features || '').split(',').map(f => f.trim()).filter(f => f);
+                        const featuresHTML = featuresArray.map(f => `<li style="padding: 8px 0;">✓ ${f}</li>`).join('');
                         const highlight = plan.highlight === 'yes' ? `border: 3px solid ${selections.accentColor}; transform: scale(1.05);` : `border: 2px solid #ddd;`;
                         
                         pricingHTML += `
